@@ -29,7 +29,6 @@ class Table extends React.Component {
 
   handleClick = (e) => {
     e.preventDefault();
-    console.log('The link was clicked.');
     this.state.clickCount = this.state.clickCount + 1;
   };
 
@@ -45,8 +44,8 @@ class Table extends React.Component {
         <thead>
         <tr>
             <th onClick={this.handleClick}>Unit Id</th>
-            <th><a href="#" onClick={this.handleClick}>Temperature</a></th>
-            <th><a href="#" onClick={this.handleClick}>Unix Stamp</a></th>    
+            <th onClick={this.handleClick}>Temperature</th>
+            <th onClick={this.handleClick}>Unix Stamp</th>    
         </tr>
         </thead>
         {this.state.measurements.map((measurement) => (
