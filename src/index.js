@@ -3,48 +3,86 @@ import ReactDOM from "react-dom";
 
 class Table extends React.Component {
   state = {
-    measurements: []
+    measurements: [],
+    average: 0,
+    clickCount: 0
   }
 
 
 
   componentDidMount() {
-      console.log("here");
 
-    fetch('http://localhost:3000/getMeasurements')
-      .then(response => response.json())
-      .then(response => this.setState({measurements: response}))
-      .catch(err => console.error(err))
+    this.refreshInterval = setInterval(() => {
+        fetch('http://localhost:3000/getMeasurements')
+        .then(response => response.json())
+        .then(response => this.setState({measurements: response}))
+        .catch(err => console.error(err))
 
-
-      console.log(this.state.measurements);
+        var sum = 0;
+        for (let i = 0;i < this.state.measurements.length; i++) {
+            sum += this.state.measurements[i].temperature; 
+        }   
+        this.state.average = sum /5;
+  
+    },600) 
   }
+
+  handleClick = (e) => {
+    e.preventDefault();
+    console.log('The link was clicked.');
+    this.state.clickCount = this.state.clickCount + 1;
+  };
+
+
  
   render() {
     return (
         <React.Fragment>
-        <h1>Contact Management</h1>
+        <h1>Measurements</h1>
+        
+        <p>Average is: {this.state.average} and the header click count is: {this.state.clickCount}  </p>
         <table border='1' width='100%' >
+        <thead>
         <tr>
-            <th>Unit ID</th>
-            <th>Temperature</th>
-            <th>Unix Stamp</th>    
+            <th onClick={this.handleClick}>Unit Id</th>
+            <th><a href="#" onClick={this.handleClick}>Temperature</a></th>
+            <th><a href="#" onClick={this.handleClick}>Unix Stamp</a></th>    
         </tr>
-
+        </thead>
         {this.state.measurements.map((measurement) => (
             <tbody>
             <tr>
                 <td>{ measurement.unit_id }</td>
                 <td>{ measurement.temperature }</td>
-                <td>{ measurement.unix_stamp }</td>
+                <td>{ measurement.unix_timestamp }</td>
             </tr>
             </tbody>
         ))}
         </table>
+        
         </React.Fragment>
+        
     );
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  componentWillUnmount(){
+      clearInterval(this.refreshInterval);
+  }
   
 
 }
